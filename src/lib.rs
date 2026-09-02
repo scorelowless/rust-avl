@@ -38,7 +38,7 @@ impl PoorString {
         if let Ok(layout) = Layout::from_size_align(self.len, 1) {
             unsafe { std::alloc::dealloc(self.ptr as *mut u8, layout); }
             self.valid = false;
-        } // w przypadku Err nic nie robimy
+        } // in case of Err we do nothing
     }
 }
 
@@ -204,7 +204,7 @@ impl AVLTree {
         }
     }
 
-    // błąd w tej funkcji oznacza, że klucz już istnieje lub błąd alokacji pamięci
+    // error in this function means that the key already exists or a memory allocation error occurred
     unsafe fn insert_node(&self, node: *mut Node, key: u64, value: PoorString) -> Option<*mut Node> {
         if node.is_null() {
             return unsafe { Node::new(key, value) }
@@ -216,7 +216,7 @@ impl AVLTree {
                 (*node).right = self.insert_node((*node).right, key, value)?;
             } else {
                 return None;
-                // gdybyśmy chcieli aktualizować wartość dla istniejącego klucza:
+                // if we wanted to update the value for an existing key:
                 // (*node).value.free();
                 // (*node).value = value;
                 // return Some(node);
@@ -285,11 +285,11 @@ impl AVLTree {
                 (*node).left = self.delete_node((*node).left, key)?;
             } else if key > (*node).key {
                 (*node).right = self.delete_node((*node).right, key)?;
-            } else if (*node).left.is_null() || (*node).right.is_null() { // 1 lub 0 dzieci
+            } else if (*node).left.is_null() || (*node).right.is_null() { // 1 or 0 children
                 let result_node = Self::get_child_or_null(node);
                 Node::free(node);
                 return Some(result_node);
-            } else { // 2 dzieci
+            } else { // 2 children
                 let successor_node = Self::min_node((*node).right);
                 Node::move_key_value_from_to(successor_node, node);
                 (*node).right = self.delete_node((*node).right, (*successor_node).key)?;
@@ -320,7 +320,8 @@ macro_rules! avl {
                 $(
                     let ps = PoorString::new($val.as_bytes())?;
                      if !tree.insert($key, ps) {
-                        return None; // jeśli podane zostały niepoprawne dane to nie tworzymy drzewa
+                        // if the data provided is invalid, we do not create the tree
+                        return None;
                     }
                 )*
                 Some(tree)
@@ -341,7 +342,7 @@ pub extern "C" fn avl_create() -> *mut AVLTree {
 }
 
 /// # Safety
-/// `tree` musi być wskaźnikiem na poprawnie zaalokowane drzewo AVL utworzone przez `avl_create`.
+/// `tree` must be a pointer to a properly allocated AVL tree created by `avl_create`.
 #[unsafe(no_mangle)]
 pub unsafe extern "C" fn avl_free(tree: *mut AVLTree) {
     if tree.is_null() {
@@ -355,7 +356,7 @@ pub unsafe extern "C" fn avl_free(tree: *mut AVLTree) {
 }
 
 /// # Safety
-/// `tree` musi być wskaźnikiem na poprawnie zaalokowane drzewo AVL utworzone przez `avl_create`.
+/// `tree` must be a pointer to a properly allocated AVL tree created by `avl_create`.
 #[unsafe(no_mangle)]
 pub unsafe extern "C" fn avl_insert(tree: *mut AVLTree, key: u64, value: *const c_char) -> i32 {
     if tree.is_null() || value.is_null() {
@@ -372,7 +373,7 @@ pub unsafe extern "C" fn avl_insert(tree: *mut AVLTree, key: u64, value: *const 
 }
 
 /// # Safety
-/// `tree` musi być wskaźnikiem na poprawnie zaalokowane drzewo AVL utworzone przez `avl_create`.
+/// `tree` must be a pointer to a properly allocated AVL tree created by `avl_create`.
 #[unsafe(no_mangle)]
 pub unsafe extern "C" fn avl_contains(tree: *mut AVLTree, key: u64) -> i32 {
     if tree.is_null() {
@@ -386,8 +387,8 @@ pub unsafe extern "C" fn avl_contains(tree: *mut AVLTree, key: u64) -> i32 {
 }
 
 /// # Safety
-/// `tree` musi być wskaźnikiem na poprawnie zaalokowane drzewo AVL utworzone przez `avl_create`.
-/// Zwrócony wskaźnik na c-stringa musi zostać zwolniony przez wywołanie `free_string`.
+/// `tree` must be a pointer to a properly allocated AVL tree created by `avl_create`.
+/// The returned pointer to a c-string must be freed by calling `free_string`.
 #[unsafe(no_mangle)]
 pub unsafe extern "C" fn avl_get(tree: *mut AVLTree, key: u64) -> *const c_char {
     if tree.is_null() {
@@ -417,19 +418,19 @@ pub unsafe extern "C" fn avl_get(tree: *mut AVLTree, key: u64) -> *const c_char 
 }
 
 /// # Safety
-/// `s` musi być wskaźnikiem na poprawnie zaalokowanego c-stringa utworzonego przez `avl_get`.
+/// `s` must be a pointer to a properly allocated c-string created by `avl_get`.
 #[unsafe(no_mangle)]
 pub unsafe extern "C" fn free_string(s: *mut c_char) {
     if !s.is_null() {
         let len = unsafe { CStr::from_ptr(s).to_bytes().len() };
         if let Ok(layout) = Layout::from_size_align(len + 1, 1) {
             unsafe { std::alloc::dealloc(s as *mut u8, layout); }
-        } // w przypadku Err nic nie robimy
+        } // in case of Err we do nothing
     }
 }
 
 /// # Safety
-/// `tree` musi być wskaźnikiem na poprawnie zaalokowane drzewo AVL utworzone przez `avl_create`.
+/// `tree` must be a pointer to a properly allocated AVL tree created by `avl_create`.
 #[unsafe(no_mangle)]
 pub unsafe extern "C" fn avl_delete(tree: *mut AVLTree, key: u64) -> i32 {
     if tree.is_null() {
