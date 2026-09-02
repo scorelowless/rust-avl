@@ -1,0 +1,11 @@
+[package]
+name = "lab13"
+version = "0.1.0"
+edition = "2024"
+
+[lib]
+name = "lab13"
+crate-type = ["rlib", "cdylib", "staticlib"]
+
+[dependencies]
+libc = "1.0.0-alpha.2"
