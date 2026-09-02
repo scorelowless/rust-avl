@@ -1,4 +1,4 @@
-use lab13::{avl, AVLTree, PoorString};
+use rust_avl::{avl, AVLTree, PoorString};
 
 fn checker<T>(x: Option<T>) -> T {
     match x {

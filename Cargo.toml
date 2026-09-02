@@ -1,10 +1,10 @@
 [package]
-name = "lab13"
+name = "rust_avl"
 version = "0.1.0"
 edition = "2024"
 
 [lib]
-name = "lab13"
+name = "rust_avl"
 crate-type = ["rlib", "cdylib", "staticlib"]
 
 [dependencies]

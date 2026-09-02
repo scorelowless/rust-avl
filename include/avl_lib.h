@@ -1,5 +1,5 @@
-#ifndef RUST_CODE_AVL_LIB_H
-#define RUST_CODE_AVL_LIB_H
+#ifndef RUST_AVL_LIB_H
+#define RUST_AVL_LIB_H
 
 typedef struct AVLTree AVLTree;
 
@@ -11,4 +11,4 @@ const char* avl_get(AVLTree* tree, uint64_t key);
 void free_string(const char* str);
 int32_t avl_delete(AVLTree* tree, uint64_t key);
 
-#endif //RUST_CODE_AVL_LIB_H
+#endif //RUST_AVL_LIB_H

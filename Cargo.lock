@@ -3,7 +3,7 @@
 version = 4
 
 [[package]]
-name = "lab13"
+name = "rust_avl"
 version = "0.1.0"
 dependencies = [
     "libc",
