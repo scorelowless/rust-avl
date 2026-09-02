@@ -2,6 +2,7 @@
 
 The library was written for a Rust course.
 The library allows for insertion, deletion and searching of elements in AVL tree.
+The tree only holds string values with integer keys.
 
 Aside from library, the project contains examples of use, both in Rust and C.
 The project also contains a simple bash script to run the C example.
